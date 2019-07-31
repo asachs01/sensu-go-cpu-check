@@ -1,20 +1,25 @@
 package main
 
+//Import the packages we need
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"os"
+	"io"
+	"time"
+	"strconv"
 
 	"github.com/sensu/sensu-go/types"
+	"github.com/shirou/gopsutil/cpu"
 	"github.com/spf13/cobra"
 )
 
+//Set up some variables. Most notably, warning and critical as time durations
 var (
-	foo   string
-	stdin *os.File
+	warning, critical string
+	stdin   *os.File
 )
 
+//Start our main function
 func main() {
 	rootCmd := configureRootCommand()
 	if err := rootCmd.Execute(); err != nil {
@@ -23,25 +28,31 @@ func main() {
 	}
 }
 
+//Set up our flags for the command. Note that we have time duration defaults for warning & critical
 func configureRootCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "sensu-CHANGEME",
-		Short: "The Sensu Go CHANGEME for x",
+		Use:   "sensu-go-cpu-check",
+		Short: "The Sensu Go check for system CPU usage",
 		RunE:  run,
 	}
 
-	cmd.Flags().StringVarP(&foo,
-		"foo",
-		"f",
-		"",
-		"example")
+	cmd.Flags().StringVarP(&warning,
+		"warning",
+		"w",
+		"75",
+		"Warning value for system cpu.")
 
-	_ = cmd.MarkFlagRequired("foo")
-
+	cmd.Flags().StringVarP(&critical,
+		"critical",
+		"c",
+		"90",
+		"Critical value for system cpu")
+		
 	return cmd
 }
 
 func run(cmd *cobra.Command, args []string) error {
+
 	if len(args) != 0 {
 		_ = cmd.Help()
 		return fmt.Errorf("invalid argument(s) received")
@@ -50,33 +61,50 @@ func run(cmd *cobra.Command, args []string) error {
 	if stdin == nil {
 		stdin = os.Stdin
 	}
-
-	eventJSON, err := ioutil.ReadAll(stdin)
-	if err != nil {
-		return fmt.Errorf("failed to read stdin: %s", err)
-	}
-
+	
 	event := &types.Event{}
-	err = json.Unmarshal(eventJSON, event)
-	if err != nil {
-		return fmt.Errorf("failed to unmarshal stdin data: %s", err)
-	}
-
-	if err = event.Validate(); err != nil {
-		return fmt.Errorf("failed to validate event: %s", err)
-	}
-
-	if !event.HasCheck() {
-		return fmt.Errorf("event does not contain check")
-	}
-
-	return exampleAction(event)
+	
+	return checkCPU(event)
 }
 
-func exampleAction(event *types.Event) error {
-	fmt.Printf("hello world: %s\n", foo)
+//Here we start the meat of what we do.
+func checkCPU(event *types.Event) error {
+	
+	//Setting "CheckUptime" as a constant
+	const checkName = "CheckCPU"
+	const metricName = "system_cpu"
+	
+	warn, err := strconv.ParseFloat(warning, 64)
+	crit, err := strconv.ParseFloat(critical, 64)	
+	
+	interval := time.Millisecond * 500
 
-	fmt.Printf("Event Key: %s-%s\n", event.Entity.Name, event.Check.Name)
-
+	//Let's set up some error handling
+	if err != nil {
+		msg := fmt.Sprintf("Failed to determine cpu %s", err.Error())
+		io.WriteString(os.Stdout, msg)
+		os.Exit(3)
+	}
+	
+	//Setting CPU as the value retrieved from gopsutil
+	cpuStat, _ := cpu.Percent(interval, false)
+	//cpuTime, err := cpu.Times(false)
+	
+	for _, i := range cpuStat {
+		if i > crit {
+			msg := fmt.Sprintf("%s CRITICAL - value = %f | %s=%f\n", checkName, i, metricName, i)
+			io.WriteString(os.Stdout, msg)
+			os.Exit(2)
+		} else if i >= warn && i <= crit {
+			msg := fmt.Sprintf("%s WARNING - value = %f | %s=%f\n", checkName, i, metricName, i)
+			io.WriteString(os.Stdout, msg)
+			os.Exit(1)
+		} else {
+			msg := fmt.Sprintf("%s OK - value = %f | %s=%f\n", checkName, i, metricName, i)
+			io.WriteString(os.Stdout, msg)
+			os.Exit(0)
+		}
+	}
+	
 	return nil
 }
