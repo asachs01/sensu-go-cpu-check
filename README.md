@@ -95,7 +95,7 @@ This project uses `gopsutil`, and is thus largely dependent on the systems that 
 * FreeBSD
 * OpenBSD
 * Mac OS X
-* Windows (states as not supported, but I've confirmed that it is)
+* Windows
 * Solaris
 
 ## Contributing
