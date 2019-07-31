@@ -32,7 +32,7 @@ checksum:
   # Default is `{{ .ProjectName }}_{{ .Version }}_checksums.txt`.
   name_template: "{{ .ProjectName }}_{{ .Version }}_sha256-checksums.txt"
 
-archive:
+archives:
   format: tar.gz
   files:
     - LICENSE
