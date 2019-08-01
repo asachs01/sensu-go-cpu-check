@@ -1,7 +1,7 @@
 # Sensu Go CPU Check
 [![Bonsai Asset Badge](https://img.shields.io/badge/Sensu%20Go%20CPU%20Checks-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/asachs01/sensu-go-cpu-check) [![TravisCI Build Status](https://travis-ci.org/asachs01/sensu-go-cpu-check.svg?branch=master)](https://travis-ci.org/asachs01/sensu-go-cpu-check)
 
-This plugin provides a check for system uptime for Sensu Go. The `sensu-go-cpu-check` check takes the flags `-w` (warning) and `-c` (critical) and a desired  duration utilization percentage after each flag. By default, these are a warning value of 75% and a critical value of 90%.
+This plugin provides a check for system CPU utilization for Sensu Go. The `sensu-go-cpu-check` check takes the flags `-w` (warning) and `-c` (critical) and a desired  duration utilization percentage after each flag. By default, these are a warning value of 75% and a critical value of 90%.
 
 ## Installation
 
