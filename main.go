@@ -92,15 +92,15 @@ func checkCPU(event *types.Event) error {
 	
 	for _, i := range cpuStat {
 		if i > crit {
-			msg := fmt.Sprintf("%s CRITICAL - value = %f | %s=%f\n", checkName, i, metricName, i)
+			msg := fmt.Sprintf("%s CRITICAL - value = %.2f | %s=%.2f\n", checkName, i, metricName, i)
 			io.WriteString(os.Stdout, msg)
 			os.Exit(2)
 		} else if i >= warn && i <= crit {
-			msg := fmt.Sprintf("%s WARNING - value = %f | %s=%f\n", checkName, i, metricName, i)
+			msg := fmt.Sprintf("%s WARNING - value = %.2f | %s=%.2f\n", checkName, i, metricName, i)
 			io.WriteString(os.Stdout, msg)
 			os.Exit(1)
 		} else {
-			msg := fmt.Sprintf("%s OK - value = %f | %s=%f\n", checkName, i, metricName, i)
+			msg := fmt.Sprintf("%s OK - value = %.2f | %s=%.2f\n", checkName, i, metricName, i)
 			io.WriteString(os.Stdout, msg)
 			os.Exit(0)
 		}
