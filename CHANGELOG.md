@@ -7,7 +7,7 @@ Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 
-## [0.0.1] - 2019-07-31
+## [0.0.3] - 2019-08-05
 
-### Added
-- Initial release
+### Fixes
+- Changes CPU measurement to only go to 2 decimal points
