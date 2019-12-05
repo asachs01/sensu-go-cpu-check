@@ -1,4 +1,4 @@
-[![Bonsai Asset Badge](https://img.shields.io/badge/Sensu%20Go%20CPU%20Checks-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/asachs01/sensu-go-cpu-check) [![TravisCI Build Status](https://travis-ci.org/asachs01/sensu-go-cpu-check.svg?branch=master)](https://travis-ci.org/asachs01/sensu-go-cpu-check)
+[![Bonsai Asset Badge](https://img.shields.io/badge/Sensu%20Go%20CPU%20Check-Download%20Me-brightgreen.svg?colorB=89C967&logo=sensu)](https://bonsai.sensu.io/assets/asachs01/sensu-go-cpu-check) [![TravisCI Build Status](https://travis-ci.org/asachs01/sensu-go-cpu-check.svg?branch=master)](https://travis-ci.org/asachs01/sensu-go-cpu-check)
 
 # Sensu Go CPU Check
 - [Overview](#overview)
