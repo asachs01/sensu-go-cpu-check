@@ -39,7 +39,11 @@ CheckCPU OK - value = 39.50 | system_cpu=39.50
 
 ### Asset registration
 
-Assets are the best way to make use of this check. If you're not using an asset, please consider doing so! You can find this asset on the [Bonsai Asset Index](https://bonsai.sensu.io/assets/asachs01/sensu-go-cpu-check).
+Assets are the best way to make use of this check. If you're not using this plugin as an asset, please consider doing so! If you're using Sensu 5.13 or later, you can install this plugin as an asset by running:
+
+`sensuctl asset add asachs01/sensu-go-cpu-check`
+
+Else, you can find this asset on the [Bonsai Asset Index](https://bonsai.sensu.io/assets/asachs01/sensu-go-cpu-check).
 
 ### Asset definition
 
