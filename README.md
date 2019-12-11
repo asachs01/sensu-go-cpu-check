@@ -10,6 +10,8 @@
 - [Installation from source and contributing](#installation-from-source-and-contributing)
 - [Additional notes](#additional-notes)
 
+## Overview
+
 This plugin provides a check for system CPU utilization for Sensu Go. The `sensu-go-cpu-check` check takes the flags `-w` (warning) and `-c` (critical) and a desired  duration utilization percentage after each flag. By default, these are a warning value of 75% and a critical value of 90%. This check also outputs data as `nagios_perfdata`(for more information, see [this Nagios documentation article](https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/perfdata.html). This allows for the check to be used as both a status check and a metric check. You can see an example of this in the [example check definition](#check-definition) below.
 
 ## Usage Examples
