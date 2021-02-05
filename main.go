@@ -3,10 +3,10 @@ package main
 //Import the packages we need
 import (
 	"fmt"
-	"os"
 	"io"
-	"time"
+	"os"
 	"strconv"
+	"time"
 
 	"github.com/sensu/sensu-go/types"
 	"github.com/shirou/gopsutil/cpu"
@@ -15,8 +15,9 @@ import (
 
 //Set up some variables. Most notably, warning and critical as time durations
 var (
-	warning, critical string
-	stdin   *os.File
+	warning, critical, interval string
+	percpu                      bool
+	stdin                       *os.File
 )
 
 //Start our main function
@@ -47,7 +48,19 @@ func configureRootCommand() *cobra.Command {
 		"c",
 		"90",
 		"Critical value for system cpu")
-		
+
+	cmd.Flags().StringVarP(&interval,
+		"interval",
+		"i",
+		"500",
+		"Interval value in ms for system cpu")
+
+	cmd.Flags().BoolVarP(&percpu,
+		"percpu",
+		"p",
+		false,
+		"Percpu value for system cpu")
+
 	return cmd
 }
 
@@ -61,23 +74,22 @@ func run(cmd *cobra.Command, args []string) error {
 	if stdin == nil {
 		stdin = os.Stdin
 	}
-	
+
 	event := &types.Event{}
-	
+
 	return checkCPU(event)
 }
 
 //Here we start the meat of what we do.
 func checkCPU(event *types.Event) error {
-	
+
 	//Setting "CheckUptime" as a constant
 	const checkName = "CheckCPU"
 	const metricName = "system_cpu"
-	
+
 	warn, err := strconv.ParseFloat(warning, 64)
-	crit, err := strconv.ParseFloat(critical, 64)	
-	
-	interval := time.Millisecond * 500
+	crit, err := strconv.ParseFloat(critical, 64)
+	inter, err := strconv.ParseInt(interval, 10, 64)
 
 	//Let's set up some error handling
 	if err != nil {
@@ -85,11 +97,13 @@ func checkCPU(event *types.Event) error {
 		io.WriteString(os.Stdout, msg)
 		os.Exit(3)
 	}
-	
+
+	interval_ms := time.Millisecond * time.Duration(inter)
+
 	//Setting CPU as the value retrieved from gopsutil
-	cpuStat, _ := cpu.Percent(interval, false)
+	cpuStat, _ := cpu.Percent(interval_ms, percpu)
 	//cpuTime, err := cpu.Times(false)
-	
+
 	for _, i := range cpuStat {
 		if i > crit {
 			msg := fmt.Sprintf("%s CRITICAL - value = %.2f | %s=%.2f\n", checkName, i, metricName, i)
@@ -105,6 +119,6 @@ func checkCPU(event *types.Event) error {
 			os.Exit(0)
 		}
 	}
-	
+
 	return nil
 }
